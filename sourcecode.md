@@ -1,4 +1,4 @@
-if not LPH_OBFUSCATED then --  set these if not obfuscated so your script can run without obfuscation for when you are testing
+if not LPH_OBFUSCATED then --  set these if not obfuscated so your script can run without obfuscation for when you are testing 
     LPH_JIT_ULTRA = function(...)
         return (...)
     end
