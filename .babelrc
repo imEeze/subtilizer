@@ -1,0 +1,21 @@
+{
+    "presets": [
+      "@babel/preset-env",        // Permet de transformer le code JavaScript moderne en une version compatible avec les navigateurs cibles.
+      "@babel/preset-react"       // Si tu utilises React, ce preset est indispensable pour transformer le JSX en JavaScript.
+    ],
+    "plugins": [
+      "@babel/plugin-proposal-class-properties",    // Permet d'utiliser les propriétés de classe dans des versions plus anciennes de JavaScript.
+      "@babel/plugin-proposal-private-methods",    // Permet l'utilisation de méthodes privées dans les classes.
+      "@babel/plugin-syntax-dynamic-import",       // Permet d'utiliser les imports dynamiques (import() en JavaScript).
+      "babel-plugin-transform-runtime"             // Optimise le code en évitant la duplication du code pour des polyfills.
+    ],
+    "env": {
+      "production": {
+        "plugins": [
+          "transform-react-remove-prop-types",     // En production, supprime les types de propriétés React pour alléger le bundle.
+          "@babel/plugin-transform-react-inline-elements" // Optimisation du rendu JSX pour une meilleure performance.
+        ]
+      }
+    }
+  }
+  

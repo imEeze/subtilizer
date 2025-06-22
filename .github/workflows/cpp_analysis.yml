@@ -1,0 +1,50 @@
+name: Analyse et Déploiement C++ Automatisés
+
+on:
+  push:
+    paths:
+      - 'sourcecode.md'
+      - 'extract_cpp_code.py'
+  pull_request:
+    paths:
+      - 'sourcecode.md'
+      - 'extract_cpp_code.py'
+
+jobs:
+  analyse-cpp:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Installer Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Installer cppcheck
+        run: sudo apt-get update && sudo apt-get install -y cppcheck
+      - name: Extraire le code C++
+        run: python3 extract_cpp_code.py
+      - name: Analyse statique avec cppcheck
+        run: cppcheck --enable=all --inconclusive --error-exitcode=1 output.cpp
+      - name: Analyse avancée avec clang-tidy
+        run: |
+          sudo apt-get install -y clang-tidy
+          clang-tidy output.cpp -- -std=c++17 || true
+      - name: Compilation du code extrait
+        run: |
+          sudo apt-get install -y g++
+          g++ -std=c++17 -o output_bin output.cpp
+      - name: Exécution des tests unitaires (si présents)
+        run: |
+          if grep -q 'main(' output.cpp; then ./output_bin; else echo "Pas de fonction main() trouvée, tests non exécutés."; fi
+      - name: Déploiement Fly.io
+        if: success()
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          curl -L https://fly.io/install.sh | sh
+          export FLYCTL_INSTALL="$HOME/.fly"
+          export PATH="$FLYCTL_INSTALL/bin:$PATH"
+          flyctl auth token $FLY_API_TOKEN
+          # Remplacer la commande suivante par le déploiement réel de ton app
+          echo "Déploiement Fly.io ici (à adapter selon ton projet)" 
